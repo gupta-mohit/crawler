@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import com.mohit.crawler.queue.QueueManagerImpl;
+import com.mohit.crawler.servics.FileDownloaderImpl;
 import com.mohit.crawler.worker.LinkCrawler;
 
 public class WebCrawlerImpl implements WebCrawler {
@@ -45,8 +46,17 @@ public class WebCrawlerImpl implements WebCrawler {
 		
 	} while(!isTaskComplete);
 	
-		executor.shutdown();
+	if(!queueManager.getMailsToDownload().isEmpty())
+	{  for(String s : queueManager.getMailsToDownload()){
+		executor.execute(new FileDownloaderImpl(s));
+		
 	}
+		executor.shutdown();
+		
+	}
+	}
+	
+
 
 	
 

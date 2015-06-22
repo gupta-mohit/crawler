@@ -36,7 +36,7 @@ public class QueueManagerImpl implements QueueManager{
 		this.visitedLinks = visitedLinks;
 	}
 
-	private Set<String> getMailsToDownload() {
+	public Set<String> getMailsToDownload() {
 		return mailsToDownload;
 	}
 
