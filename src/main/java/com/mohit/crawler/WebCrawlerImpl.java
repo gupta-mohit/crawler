@@ -1,63 +1,63 @@
 package com.mohit.crawler;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import com.mohit.crawler.queue.QueueManagerImpl;
-import com.mohit.crawler.servics.FileDownloaderImpl;
-import com.mohit.crawler.worker.LinkCrawler;
+import com.mohit.crawler.services.FileDownloaderImpl;
+import com.mohit.crawler.worker.MailLinkCrawler;
 
 public class WebCrawlerImpl implements WebCrawler {
-	
-	String baseUrl;
-	String year;
-	ExecutorService executor = Executors.newFixedThreadPool(100);
+
+	private String baseUrl;
+	private String year;
+	private String filePath;
 	boolean isTaskComplete=false;
-	public WebCrawlerImpl(String baseUrl, String year) {
+
+	ExecutorService executor = Executors.newFixedThreadPool(20);
+	ExecutorService downloadExecutor = Executors.newFixedThreadPool(20);
+	Logger logger = Logger.getLogger("WebCrawlerImpl.class");
+
+	public WebCrawlerImpl(String baseUrl, String year, String filePath) {
 		this.baseUrl=baseUrl;
-		this.year=year;
-		
-	 }
+		this.filePath=filePath;
+
+	}
 
 	public void  crawl() {
-		
-		QueueManagerImpl queueManager = new QueueManagerImpl(baseUrl);
-		//while(!queueManager.getLinksToVisit().isEmpty()){
-		//int a=0;
-			//while(a<1000){
-			//executor.execute(new LinkCrawler(queueManager));
-			
-			
-		//a++;
-		//}
-		
-	do{
-		executor.execute(new LinkCrawler(queueManager));
-		
-	} while(!isTaskComplete);
-	
-	if(!queueManager.getMailsToDownload().isEmpty())
-	{  for(String s : queueManager.getMailsToDownload()){
-		executor.execute(new FileDownloaderImpl(s));
-		
-	}
+
+		QueueManagerImpl queueManager = new  QueueManagerImpl(baseUrl);
+
+		for(int i =0 ; i<50;i++){
+			executor.execute(new MailLinkCrawler(queueManager));
+		}
+
 		executor.shutdown();
-		
-	}
-	}
-	
+		try {
+			executor.awaitTermination(120, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 
-	
+		logger.info("Downloading mails..starting mail downloader service");
+		for(String s : queueManager.getMailsToDownload()){
+			downloadExecutor.execute(new FileDownloaderImpl(s,filePath));
+		}
+		downloadExecutor.shutdown();
+		try {
+			downloadExecutor.awaitTermination(120, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		logger.info("finished downloading mails");
+
+	}
+
+
+
+
 
 }
