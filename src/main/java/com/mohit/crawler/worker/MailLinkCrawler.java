@@ -82,7 +82,6 @@ public class MailLinkCrawler implements Runnable {
 				}
 
 				manager.addToVisitedLinks(urlToCrawl);
-				System.out.println("visited set size"+manager.getVisitedLinks().size()+"queue size "+manager.getLinksToVisit().size()+"downloadmail links = "+manager.getMailsToDownload().size());
 				logger.info("crawled and fetched links from "+urlToCrawl);
 
 			}
