@@ -1,21 +1,20 @@
 package com.mohit.crawler.worker;
 
 import java.io.IOException;
-
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.mohit.crawler.queue.QueueManager;
-import com.mohit.crawler.queue.QueueManagerImpl;
+import com.mohit.crawler.dataobject.LinkCrawlerDataObject;
+
 import java.util.logging.Logger;
 
 public class MailLinkCrawler implements Runnable {
 
 	String urlToCrawl=null;
-	private QueueManager manager=new QueueManagerImpl();
-	public MailLinkCrawler( QueueManagerImpl queueManager ){
+	private LinkCrawlerDataObject manager=new LinkCrawlerDataObject();
+	public MailLinkCrawler( LinkCrawlerDataObject queueManager ){
 		this.manager=queueManager;
 	}
 	Document doc;
@@ -82,6 +81,7 @@ public class MailLinkCrawler implements Runnable {
 				}
 
 				manager.addToVisitedLinks(urlToCrawl);
+				//System.out.println("visited set size"+manager.getVisitedLinks().size()+"queue size "+manager.getLinksToVisit().size()+"downloadmail links = "+manager.getMailsToDownload().size());
 				logger.info("crawled and fetched links from "+urlToCrawl);
 
 			}
