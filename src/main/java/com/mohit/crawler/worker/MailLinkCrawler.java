@@ -13,9 +13,9 @@ import java.util.logging.Logger;
 public class MailLinkCrawler implements Runnable {
 
 	String urlToCrawl=null;
-	private LinkCrawlerDataObject manager=new LinkCrawlerDataObject();
-	public MailLinkCrawler( LinkCrawlerDataObject queueManager ){
-		this.manager=queueManager;
+	private LinkCrawlerDataObject sharedDataObject=new LinkCrawlerDataObject();
+	public MailLinkCrawler( LinkCrawlerDataObject dataObject ){
+		this.sharedDataObject=dataObject;
 	}
 	Document doc;
 	Logger logger = Logger.getLogger("LinkCrawler.java");
@@ -29,7 +29,7 @@ public class MailLinkCrawler implements Runnable {
 
 
 	private boolean isNotEmpty() {
-		boolean isNotEmpty = !manager.getLinksToVisit().isEmpty();
+		boolean isNotEmpty = !sharedDataObject.getLinksToVisit().isEmpty();
 		if(!isNotEmpty){
 			try {
 				Thread.sleep(5000);
@@ -37,13 +37,13 @@ public class MailLinkCrawler implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		return !manager.getLinksToVisit().isEmpty();
+		return !sharedDataObject.getLinksToVisit().isEmpty();
 	}
 
 
 	private void crawlingLogic() {
 		System.out.println("Starting " + Thread.currentThread().getName());
-		urlToCrawl=manager.getNextLinkToVisit();
+		urlToCrawl=sharedDataObject.getNextLinkToVisit();
 		if(urlToCrawl != null)
 		{
 
@@ -67,20 +67,20 @@ public class MailLinkCrawler implements Runnable {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				Elements urls = doc.select("a[href*=2015]");
+				Elements urls = doc.select("a[href*="+sharedDataObject.getYear()+"]");
 				for(Element s:urls){
 					String href=s.attr("abs:href");
 					if(href.toLowerCase().contains("thread")|| href.toLowerCase().contains("author"))
 						continue;
 					if(!href.contains("http://mail-archives.apache.org")) continue;
-					if (manager.getLinksToVisit().contains(href)) continue;
-					if(! manager.isAlreadyVisitedLink(href)){
-						manager.addLinksToVisit(href);}
-					if(s.text().contains("View raw message")){manager.addToMailsToDownload(href);}
+					if (sharedDataObject.getLinksToVisit().contains(href)) continue;
+					if(! sharedDataObject.isAlreadyVisitedLink(href)){
+						sharedDataObject.addLinksToVisit(href);}
+					if(s.text().contains("View raw message")){sharedDataObject.addToMailsToDownload(href);}
 
 				}
 
-				manager.addToVisitedLinks(urlToCrawl);
+				sharedDataObject.addToVisitedLinks(urlToCrawl);
 				//System.out.println("visited set size"+manager.getVisitedLinks().size()+"queue size "+manager.getLinksToVisit().size()+"downloadmail links = "+manager.getMailsToDownload().size());
 				logger.info("crawled and fetched links from "+urlToCrawl);
 

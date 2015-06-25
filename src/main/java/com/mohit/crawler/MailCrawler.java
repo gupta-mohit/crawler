@@ -23,16 +23,16 @@ public class MailCrawler extends WebCrawler {
 	public MailCrawler(String baseUrl, String year, String filePath) {
 		super(baseUrl);
 		this.filePath=filePath;
-
+		this.year=year;
+		linkCrawlerDataObject.setYear(year);
 	}
-	LinkCrawlerDataObject queueManager = new  LinkCrawlerDataObject(getBaseUrl());
+	
+	LinkCrawlerDataObject linkCrawlerDataObject = new  LinkCrawlerDataObject(getBaseUrl(),year);
 
 	public void  crawl() {
 
-
-
 		for(int i =0 ; i<50;i++){
-			executor.execute(new MailLinkCrawler(queueManager));
+			executor.execute(new MailLinkCrawler(linkCrawlerDataObject));
 		}
 
 		executor.shutdown();
@@ -52,7 +52,7 @@ public class MailCrawler extends WebCrawler {
 
 	private void downloadMails() {
 		logger.info("Downloading mails..starting mail downloader service");
-		for(String s : queueManager.getMailsToDownload()){
+		for(String s : linkCrawlerDataObject.getMailsToDownload()){
 			downloadExecutor.execute(new FileDownloaderServiceImpl(s,filePath));
 		}
 		downloadExecutor.shutdown();

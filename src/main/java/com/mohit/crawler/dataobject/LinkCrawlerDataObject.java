@@ -9,11 +9,18 @@ public class LinkCrawlerDataObject extends CrawlerDataObject{
 
 
 	private Set<String> mailsToDownload= Collections.synchronizedSet(new HashSet<String>());
-    
+    private String year;
+	
+    public String getYear() {
+		return year;
+	}
+	
+	
 	public LinkCrawlerDataObject() {
 		}
-	public LinkCrawlerDataObject(String baseUrl) {
+	public LinkCrawlerDataObject(String baseUrl,String year) {
 		super(baseUrl);
+		this.year=year;
 	}
 	
 
@@ -28,6 +35,12 @@ public class LinkCrawlerDataObject extends CrawlerDataObject{
 	public void addToMailsToDownload(String url) {
 		mailsToDownload.add(url);
 
+	}
+
+
+	public void setYear(String year) {
+		this.year=year;
+		
 	}
 
 
