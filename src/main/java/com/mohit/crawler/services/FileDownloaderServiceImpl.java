@@ -8,10 +8,10 @@ import com.mohit.crawler.utils.HtmlParserUtils;
 /*
  * A generic thread class to download any file of from a particular URL
  */
-public class FileDownloaderImpl implements FileDownloader,Runnable{
+public class FileDownloaderServiceImpl implements FileDownloaderService,Runnable{
 	String urlToDownload;
 	String path;
-	public FileDownloaderImpl(String urlToDownload,String path){
+	public FileDownloaderServiceImpl(String urlToDownload,String path){
 		this.urlToDownload=urlToDownload;
 		this.path=path;
 	}
