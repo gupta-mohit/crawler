@@ -5,30 +5,31 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import com.mohit.crawler.queue.QueueManagerImpl;
-import com.mohit.crawler.services.FileDownloaderImpl;
+import com.mohit.crawler.dataobject.LinkCrawlerDataObject;
+import com.mohit.crawler.services.FileDownloaderServiceImpl;
 import com.mohit.crawler.worker.MailLinkCrawler;
 
-public class WebCrawlerImpl implements WebCrawler {
+public class MailCrawler extends WebCrawler {
 
-	private String baseUrl;
+
 	private String year;
 	private String filePath;
 	boolean isTaskComplete=false;
 
-	ExecutorService executor = Executors.newFixedThreadPool(20);
+	ExecutorService executor = Executors.newFixedThreadPool(30);
 	ExecutorService downloadExecutor = Executors.newFixedThreadPool(20);
 	Logger logger = Logger.getLogger("WebCrawlerImpl.class");
 
-	public WebCrawlerImpl(String baseUrl, String year, String filePath) {
-		this.baseUrl=baseUrl;
+	public MailCrawler(String baseUrl, String year, String filePath) {
+		super(baseUrl);
 		this.filePath=filePath;
 
 	}
+	LinkCrawlerDataObject queueManager = new  LinkCrawlerDataObject(getBaseUrl());
 
 	public void  crawl() {
 
-		QueueManagerImpl queueManager = new  QueueManagerImpl(baseUrl);
+
 
 		for(int i =0 ; i<50;i++){
 			executor.execute(new MailLinkCrawler(queueManager));
@@ -41,10 +42,18 @@ public class WebCrawlerImpl implements WebCrawler {
 			e.printStackTrace();
 		}
 
+		logger.info("finished crawling");
+	}
 
+	public void processCrawlData() {
+		downloadMails();
+
+	}
+
+	private void downloadMails() {
 		logger.info("Downloading mails..starting mail downloader service");
 		for(String s : queueManager.getMailsToDownload()){
-			downloadExecutor.execute(new FileDownloaderImpl(s,filePath));
+			downloadExecutor.execute(new FileDownloaderServiceImpl(s,filePath));
 		}
 		downloadExecutor.shutdown();
 		try {
@@ -53,10 +62,7 @@ public class WebCrawlerImpl implements WebCrawler {
 			e.printStackTrace();
 		}
 		logger.info("finished downloading mails");
-
 	}
-
-
 
 
 
