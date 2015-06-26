@@ -1,0 +1,12 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 
+	<bean id="mailLinkCrawlerProperties" class="com.mohit.crawler.constants.MailCrawlerPropertiesBean">
+		<property name="year" value="2015" />
+		<property name="filePath" value="/home/mohitg/Documents/mails" />
+		<property name="linkToCrawl" value="http://mail-archives.apache.org/mod_mbox/maven-users/" />
+	</bean>
+ 
+</beans>
