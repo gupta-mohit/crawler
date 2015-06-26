@@ -11,10 +11,10 @@ public class CrawlerDataObject {
 	
 	public CrawlerDataObject() {
 	}
-	public CrawlerDataObject(String baseUrl){
-		this.linksToVisit.offer(baseUrl);
+	public CrawlerDataObject(String linkToCrawl){
+		this.linksToVisit.offer(linkToCrawl);
 	}
-
+    
 	private Queue<String> linksToVisit= new ConcurrentLinkedQueue<String>();
 	private Set<String> visitedLinks=Collections.synchronizedSet(new HashSet<String>());
 

@@ -1,20 +1,30 @@
 package com.mohit.crawler.worker;
 
 import java.io.IOException;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.mohit.crawler.dataobject.LinkCrawlerDataObject;
+
+import com.mohit.crawler.constants.MailCrawlerPropertiesBean;
+import com.mohit.crawler.dataobject.MailLinkCrawlerDataObject;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.logging.Logger;
 
 public class MailLinkCrawler implements Runnable {
 
 	String urlToCrawl=null;
-	private LinkCrawlerDataObject sharedDataObject=new LinkCrawlerDataObject();
-	public MailLinkCrawler( LinkCrawlerDataObject dataObject ){
+	ApplicationContext context = new ClassPathXmlApplicationContext(
+			"MailLinkCrawlerBeans.xml");
+
+	MailCrawlerPropertiesBean mailCrawlerpropertiesBean = (MailCrawlerPropertiesBean) context.getBean("mailLinkCrawlerProperties");
+	private MailLinkCrawlerDataObject sharedDataObject=new MailLinkCrawlerDataObject();
+	public MailLinkCrawler( MailLinkCrawlerDataObject dataObject ){
 		this.sharedDataObject=dataObject;
 	}
 	Document doc;
@@ -67,7 +77,7 @@ public class MailLinkCrawler implements Runnable {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				Elements urls = doc.select("a[href*="+sharedDataObject.getYear()+"]");
+				Elements urls = doc.select("a[href*="+mailCrawlerpropertiesBean.getYear()+"]");
 				for(Element s:urls){
 					String href=s.attr("abs:href");
 					if(href.toLowerCase().contains("thread")|| href.toLowerCase().contains("author"))

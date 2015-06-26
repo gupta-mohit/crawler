@@ -1,16 +1,16 @@
 package com.mohit.crawler;
 
 public abstract class WebCrawler {
-	private String baseUrl;
+	private String linkToCrawl;
 	
-	public WebCrawler(String baseUrl) {
-		this.baseUrl = baseUrl;
+	public WebCrawler(String linkToCrawl) {
+		this.linkToCrawl = linkToCrawl;
 	}
-	public String getBaseUrl() {
-		return baseUrl;
+	public String getLinkToCrawl() {
+		return linkToCrawl;
 	}
-	public void setBaseUrl(String baseUrl) {
-		this.baseUrl = baseUrl;
+	public void setLinkToCrawl(String linkToCrawl) {
+		this.linkToCrawl = linkToCrawl;
 	}
 	
 	/*

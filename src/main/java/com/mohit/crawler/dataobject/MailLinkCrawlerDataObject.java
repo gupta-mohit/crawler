@@ -5,24 +5,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class LinkCrawlerDataObject extends CrawlerDataObject{
+public class MailLinkCrawlerDataObject extends CrawlerDataObject{
 
 
 	private Set<String> mailsToDownload= Collections.synchronizedSet(new HashSet<String>());
-    private String year;
-	
-    public String getYear() {
-		return year;
+
+
+
+
+	public MailLinkCrawlerDataObject(String linkToCrawl) {
+		super(linkToCrawl);
+
 	}
-	
-	
-	public LinkCrawlerDataObject() {
-		}
-	public LinkCrawlerDataObject(String baseUrl,String year) {
-		super(baseUrl);
-		this.year=year;
+
+
+	public MailLinkCrawlerDataObject() {
 	}
-	
+
+
 
 	public Set<String> getMailsToDownload() {
 		return mailsToDownload;
@@ -37,11 +37,6 @@ public class LinkCrawlerDataObject extends CrawlerDataObject{
 
 	}
 
-
-	public void setYear(String year) {
-		this.year=year;
-		
-	}
 
 
 
