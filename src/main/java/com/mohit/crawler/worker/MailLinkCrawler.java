@@ -61,11 +61,12 @@ public class MailLinkCrawler implements Runnable {
 			Connection.Response response=null;
 			try {
 				response = Jsoup
-						.connect(urlToCrawl)
+						.connect(urlToCrawl).ignoreContentType(true)
 						.userAgent(
 								"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21")
 								.timeout(10000).execute();
 			} catch (IOException e1) {
+				System.out.println("unable to connect to url "+urlToCrawl);
 				e1.printStackTrace();
 			}
 
@@ -73,22 +74,24 @@ public class MailLinkCrawler implements Runnable {
 			if (statusCode == 200) {
 
 				try {
-					doc = Jsoup.connect(urlToCrawl).get();
+					doc = Jsoup.connect(urlToCrawl).ignoreContentType(true).get();
+					Elements urls = doc.select("a[href*="+mailCrawlerpropertiesBean.getYear()+"]");
+					for(Element s:urls){
+						String href=s.attr("abs:href");
+						if(href.toLowerCase().contains("thread")|| href.toLowerCase().contains("author"))
+							continue;
+						if(!href.contains("http://mail-archives.apache.org")) continue;
+						if (sharedDataObject.getLinksToVisit().contains(href)) continue;
+						if(! sharedDataObject.isAlreadyVisitedLink(href)){
+							sharedDataObject.addLinksToVisit(href);}
+						if(s.text().contains("View raw message")){sharedDataObject.addToMailsToDownload(href);}
+
+					}
 				} catch (IOException e) {
+					logger.info("unable to fetch data from  url "+urlToCrawl);
 					e.printStackTrace();
 				}
-				Elements urls = doc.select("a[href*="+mailCrawlerpropertiesBean.getYear()+"]");
-				for(Element s:urls){
-					String href=s.attr("abs:href");
-					if(href.toLowerCase().contains("thread")|| href.toLowerCase().contains("author"))
-						continue;
-					if(!href.contains("http://mail-archives.apache.org")) continue;
-					if (sharedDataObject.getLinksToVisit().contains(href)) continue;
-					if(! sharedDataObject.isAlreadyVisitedLink(href)){
-						sharedDataObject.addLinksToVisit(href);}
-					if(s.text().contains("View raw message")){sharedDataObject.addToMailsToDownload(href);}
-
-				}
+			
 
 				sharedDataObject.addToVisitedLinks(urlToCrawl);
 				//System.out.println("visited set size"+manager.getVisitedLinks().size()+"queue size "+manager.getLinksToVisit().size()+"downloadmail links = "+manager.getMailsToDownload().size());

@@ -26,6 +26,7 @@ public class FileOperationUtils {
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
+				logger.info("unable to create file"+fileName.substring(7));
 				e.printStackTrace();
 			}
 		}
@@ -37,6 +38,7 @@ public class FileOperationUtils {
 			bw.write(textToWrite);
 			bw.close();
 		} catch (IOException e) {
+			logger.info("unable to write to file "+fileName);			
 			e.printStackTrace();
 		}
 		logger.info("successfully saved file"+fileName);

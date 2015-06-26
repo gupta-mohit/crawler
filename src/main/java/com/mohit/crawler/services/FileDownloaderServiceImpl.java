@@ -30,6 +30,7 @@ public class FileDownloaderServiceImpl implements FileDownloaderService,Runnable
 		try {
 			statusCode = HtmlParserUtils.connectURL(urlToDownload);
 		} catch (IOException e1) {
+			logger.info("unable to connect to "+urlToDownload);
 			e1.printStackTrace();
 		}
 		if (statusCode == 200) {
@@ -37,6 +38,7 @@ public class FileDownloaderServiceImpl implements FileDownloaderService,Runnable
 			try {
 				docText = HtmlParserUtils.getDocumentforUrl(urlToDownload);
 			} catch (IOException e) {
+				logger.info("unable to connect to "+urlToDownload+"to parse file");
 				e.printStackTrace();
 			}
 		}
